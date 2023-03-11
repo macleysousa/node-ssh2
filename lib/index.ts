@@ -30,7 +30,19 @@ export class ClientSSH {
 
     async execCommandRoot(command: string, options?: SSHExecRootCommandOptions): Promise<SSHExecCommandResponse> {
         const config = await this.getConfig();
-        return this.connection.execCommand(command, { execOptions: { pty: true }, stdin: `${config.password}\n`, ...options })
+        const password: string = `${config?.password}`
+        return this.connection.execCommand(command, {
+            execOptions: { pty: true },
+            stdin: `${password}\n`,
+            cwd: options?.cwd,
+            encoding: options?.encoding,
+            onStdout: (chunk) => options?.onStdout?.(Buffer.from(chunk.toString('utf-8').replace(password, ''))),
+            onStderr: (chunk) => options?.onStderr?.(Buffer.from(chunk.toString('utf-8').replace(password, ''))),
+        }).then((response) => {
+            response.stdout = response.stdout.replace(password, '');
+            response.stderr = response.stderr.replace(password, '');
+            return response;
+        })
     }
 
     async exec(
@@ -45,7 +57,15 @@ export class ClientSSH {
         options?: SSHExecRootCommandOptions,
         parameters?: string[]): Promise<SSHExecCommandResponse | string> {
         const config = await this.getConfig();
-        return this.connection.exec(command, parameters ?? [], { execOptions: { pty: true }, stdin: `${config.password}\n`, ...options })
+        const password: string = `${config?.password}`
+        return this.connection.exec(command, parameters ?? [], {
+            execOptions: { pty: true },
+            stdin: `${password}\n`,
+            cwd: options?.cwd,
+            encoding: options?.encoding,
+            onStdout: (chunk) => options?.onStdout?.(Buffer.from(chunk.toString('utf-8').replace(password, ''))),
+            onStderr: (chunk) => options?.onStderr?.(Buffer.from(chunk.toString('utf-8').replace(password, ''))),
+        })
     }
 
     async dispose(): Promise<void> {
