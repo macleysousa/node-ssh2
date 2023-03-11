@@ -1,4 +1,4 @@
-import { Config, NodeSSH, SSHExecCommandOptions, SSHExecCommandResponse } from "node-ssh";
+import { Config, NodeSSH, SSHExecCommandOptions, SSHExecCommandResponse, SSHExecOptions } from "node-ssh";
 
 import { ConnectSSHOptions } from "./types/connect";
 import { SSHExecRootCommandOptions } from "./types/ssh-exec-root-command-options";
@@ -16,27 +16,39 @@ export class ClientSSH {
     }
 
     async isConnected(): Promise<boolean> {
-        return this.connection?.isConnected() || false;
+        return this.connection.isConnected() || false;
     }
 
     async getConfig(): Promise<Config> {
-        const { config } = this.connection?.connection as any
+        const { config } = this.connection.connection as any
         return config;
     }
 
     async execCommand(command: string, options?: SSHExecCommandOptions): Promise<SSHExecCommandResponse> {
-        return this.connection?.execCommand(command, options);
+        return this.connection.execCommand(command, options);
     }
 
-    async execRootCommand(
+    async execCommandRoot(command: string, options?: SSHExecRootCommandOptions): Promise<SSHExecCommandResponse> {
+        const config = await this.getConfig();
+        return this.connection.execCommand(command, { execOptions: { pty: true }, stdin: `${config.password}\n`, ...options })
+    }
+
+    async exec(
+        command: string,
+        parameters: string[],
+        options?: SSHExecOptions): Promise<SSHExecCommandResponse | string> {
+        return this.connection.exec(command, parameters ?? [], options as any);
+    }
+
+    async execRoot(
         command: string,
         options?: SSHExecRootCommandOptions,
         parameters?: string[]): Promise<SSHExecCommandResponse | string> {
         const config = await this.getConfig();
-        return this.connection?.exec(command, parameters ?? [], { execOptions: { pty: true }, stdin: `${config.password}\n`, ...options })
+        return this.connection.exec(command, parameters ?? [], { execOptions: { pty: true }, stdin: `${config.password}\n`, ...options })
     }
 
     async dispose(): Promise<void> {
-        return this.connection?.dispose();
+        return this.connection.dispose();
     }
 }

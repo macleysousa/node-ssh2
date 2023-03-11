@@ -12,12 +12,18 @@ async function name() {
         password: SSH_PASSWORD ?? 'password'
     })
 
-    await ssh.execRootCommand(`
-    ls -la
-    `, {
+    await ssh.exec('ls', ['-la'], {
         onStderr: (chunk) => console.log(chunk.toString('utf8')),
         onStdout: (chunk) => console.log(chunk.toString('utf8'))
     })
+
+    // await ssh.execRoot(`
+    // ls -la
+    // `, {
+    //     onStderr: (chunk) => console.log(chunk.toString('utf8')),
+    //     onStdout: (chunk) => console.log(chunk.toString('utf8'))
+    // })
+
     await ssh.dispose()
 }
 
