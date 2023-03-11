@@ -11,7 +11,8 @@ export class ClientSSH {
     }
 
     async connect(options: ConnectSSHOptions): Promise<ClientSSH> {
-        return this.connection.connect(options) as unknown as Promise<ClientSSH>;
+        await this.connection.connect(options)
+        return this;
     }
 
     async isConnected(): Promise<boolean> {

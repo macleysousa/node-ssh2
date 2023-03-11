@@ -5,10 +5,8 @@ dotenv.config();
 
 const { SSH_HOST, SSH_USERNAME, SSH_PASSWORD } = process.env;
 
-const ssh = new ClientSSH();
-
 async function name() {
-    await ssh.connect({
+    const ssh = await new ClientSSH().connect({
         host: SSH_HOST ?? 'host',
         username: SSH_USERNAME ?? 'username',
         password: SSH_PASSWORD ?? 'password'
