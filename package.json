@@ -1,5 +1,5 @@
 {
-  "name": "node-ssh2",
+  "name": "nodejs-ssh2",
   "version": "1.0.0",
   "description": "Extends node-ssh to add more features",
   "main": "dist/index.js",
@@ -29,7 +29,7 @@
   "keywords": [
     "node",
     "ssh",
-    "shh2"
+    "nodejs-ssh"
   ],
   "author": "Macley Sousa",
   "license": "MIT",
