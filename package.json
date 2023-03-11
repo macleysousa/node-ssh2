@@ -24,7 +24,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/macleysousa/system-x64.git"
+    "url": "git+https://github.com/macleysousa/node-ssh2.git"
   },
   "keywords": [
     "node",
@@ -34,7 +34,7 @@
   "author": "Macley Sousa",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/macleysousa/system-x64/issues"
+    "url": "https://github.com/macleysousa/node-ssh2/issues"
   },
-  "homepage": "https://github.com/macleysousa/system-x64#readme"
+  "homepage": "https://github.com/macleysousa/node-ssh2#readme"
 }
