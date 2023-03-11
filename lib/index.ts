@@ -2,6 +2,7 @@ import { Config, NodeSSH, SSHExecCommandOptions, SSHExecCommandResponse, SSHExec
 
 import { ConnectSSHOptions } from "./types/connect";
 import { SSHExecRootCommandOptions } from "./types/ssh-exec-root-command-options";
+import { SSHExecRootCommandResponse } from "./types/ssh-exec-root-command-response";
 
 export class ClientSSH {
     private connection: NodeSSH;
@@ -28,21 +29,18 @@ export class ClientSSH {
         return this.connection.execCommand(command, options);
     }
 
-    async execCommandRoot(command: string, options?: SSHExecRootCommandOptions): Promise<SSHExecCommandResponse> {
+    async execCommandRoot(command: string, options?: SSHExecRootCommandOptions): Promise<SSHExecRootCommandResponse> {
         const config = await this.getConfig();
         const password: string = `${config?.password}`
-        return this.connection.execCommand(command, {
+        const { code, signal, stderr, stdout } = await this.connection.execCommand(command, {
             execOptions: { pty: true },
             stdin: `${password}\n`,
             cwd: options?.cwd,
             encoding: options?.encoding,
             onStdout: (chunk) => options?.onStdout?.(Buffer.from(chunk.toString('utf-8').replace(password, ''))),
             onStderr: (chunk) => options?.onStderr?.(Buffer.from(chunk.toString('utf-8').replace(password, ''))),
-        }).then((response) => {
-            response.stdout = response.stdout.replace(password, '');
-            response.stderr = response.stderr.replace(password, '');
-            return response;
         })
+        return { code, signal, stdout: stdout.replace(password, ''), stderr: stderr.replace(password, '') };
     }
 
     async exec(
@@ -55,10 +53,10 @@ export class ClientSSH {
     async execRoot(
         command: string,
         options?: SSHExecRootCommandOptions,
-        parameters?: string[]): Promise<SSHExecCommandResponse | string> {
+        parameters?: string[]): Promise<void> {
         const config = await this.getConfig();
         const password: string = `${config?.password}`
-        return this.connection.exec(command, parameters ?? [], {
+        await this.connection.exec(command, parameters ?? [], {
             execOptions: { pty: true },
             stdin: `${password}\n`,
             cwd: options?.cwd,

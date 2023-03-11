@@ -12,15 +12,14 @@ async function name() {
         password: SSH_PASSWORD ?? 'password'
     })
 
-    await ssh.execCommandRoot('dokku logs coral-api -n 2 -p web ', {
-        // onStderr: (chunk) => console.log(chunk.toString('utf8')),
-        onStdout: (chunk) => console.log(chunk.toString('utf8')),
-    })
+    const cmd = await ssh.execCommandRoot('dokku logs coral-api -n 25 -p web ')
 
-    await ssh.execRoot('dokku logs coral-api -n 2 -p web ', {
-        // onStderr: (chunk) => console.log(chunk.toString('utf8')),
-        onStdout: (chunk) => console.log(chunk.toString('utf8')),
-    })
+    console.log(cmd)
+
+    // await ssh.execRoot('dokku logs coral-api -n 2 -p web ', {
+    //     // onStderr: (chunk) => console.log(chunk.toString('utf8')),
+    //     onStdout: (chunk) => console.log(chunk.toString('utf8')),
+    // })
 
     // await ssh.execRoot(`
     // ls -la
