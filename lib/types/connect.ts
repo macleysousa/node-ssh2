@@ -5,6 +5,8 @@ export interface ConnectSSHOptions {
     username: string;
     password?: string;
     port?: number;
+    privateKey?: string;
+    passphrase?: string;
     tryKeyboard?: boolean;
     onKeyboardInteractive?: (
         name: string,

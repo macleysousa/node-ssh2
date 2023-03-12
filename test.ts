@@ -3,16 +3,21 @@ import * as dotenv from 'dotenv';
 
 dotenv.config();
 
-const { SSH_HOST, SSH_USERNAME, SSH_PASSWORD } = process.env;
+const { SSH_HOST, SSH_USERNAME } = process.env;
+
 
 async function name() {
     const ssh = await new ClientSSH().connect({
         host: SSH_HOST ?? 'host',
         username: SSH_USERNAME ?? 'username',
-        password: SSH_PASSWORD ?? 'password'
+        tryKeyboard: true,
+        privateKey: `-----BEGIN OPENSSH PRIVATE KEY-----
+...
+-----END OPENSSH PRIVATE KEY-----
+`
     })
 
-    const cmd = await ssh.execCommandRoot('dokku logs coral-api -n 25 -p web ')
+    const cmd = await ssh.execCommandRoot('ls -la')
 
     console.log(cmd)
 
