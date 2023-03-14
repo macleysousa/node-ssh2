@@ -51,7 +51,9 @@ sudo nano /etc/ssh/sshd_config
 ```
 
 Add the line below
+``` 
 PubkeyAcceptedKeyTypes=+ssh-rsa
+``` 
 
 Restart the service sshd
 ``` 
