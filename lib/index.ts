@@ -13,6 +13,10 @@ export class ClientSSH {
 
     async connect(options: ConnectSSHOptions): Promise<ClientSSH> {
         await this.connection.connect(options)
+        setTimeout(() => {
+            this.dispose()
+            console.info('ClientSSH ===>', 'Connection timeout');
+        }, options.timeout ?? 1000 * 60 * 2);
         return this;
     }
 
@@ -26,12 +30,12 @@ export class ClientSSH {
     }
 
     async execCommand(command: string, options?: SSHExecCommandOptions): Promise<SSHExecCommandResponse> {
-        return this.connection.execCommand(command, options);
+        return this.connection.execCommand(command, options)
     }
 
     async execCommandRoot(command: string, options?: SSHExecRootCommandOptions): Promise<SSHExecRootCommandResponse> {
         const config = await this.getConfig();
-        const password: string = `${config?.password}`
+        const password: string = `${config?.password}`;
         const { code, signal, stderr, stdout } = await this.connection.execCommand(command, {
             execOptions: { pty: true },
             stdin: `${password}\n`,
@@ -39,7 +43,7 @@ export class ClientSSH {
             encoding: options?.encoding,
             onStdout: (chunk) => options?.onStdout?.(Buffer.from(chunk.toString('utf-8').replace(password, ''))),
             onStderr: (chunk) => options?.onStderr?.(Buffer.from(chunk.toString('utf-8').replace(password, ''))),
-        })
+        });
         return { code, signal, stdout: stdout.replace(password, ''), stderr: stderr.replace(password, '') };
     }
 
@@ -64,6 +68,7 @@ export class ClientSSH {
             onStdout: (chunk) => options?.onStdout?.(Buffer.from(chunk.toString('utf-8').replace(password, ''))),
             onStderr: (chunk) => options?.onStderr?.(Buffer.from(chunk.toString('utf-8').replace(password, ''))),
         })
+
     }
 
     async dispose(): Promise<void> {

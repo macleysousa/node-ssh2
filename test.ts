@@ -3,23 +3,24 @@ import * as dotenv from 'dotenv';
 
 dotenv.config();
 
-const { SSH_HOST, SSH_USERNAME } = process.env;
+const { SSH_HOST, SSH_USERNAME, SSH_PASSWORD } = process.env;
 
 
 async function name() {
-    const ssh = await new ClientSSH().connect({
-        host: SSH_HOST ?? 'host',
-        username: SSH_USERNAME ?? 'username',
-        tryKeyboard: true,
-        privateKey: `-----BEGIN OPENSSH PRIVATE KEY-----
-...
------END OPENSSH PRIVATE KEY-----
-`
+
+    const connection = {
+        host: SSH_HOST as string ?? 'host',
+        username: SSH_USERNAME as string ?? 'username',
+        password: SSH_PASSWORD as string ?? 'password',
+        timeout: 5000,
+    }
+    const ssh = await new ClientSSH().connect(connection)
+
+    ssh.execCommandRoot('dokku logs hermes-api -n 999', {
+        onStdout: (chunk) => console.log(chunk.toString('utf8')),
     })
 
-    const cmd = await ssh.execCommandRoot('ls -la')
-
-    console.log(cmd)
+    console.log('------------------', ssh.isConnected());
 
     // await ssh.execRoot('dokku logs coral-api -n 2 -p web ', {
     //     // onStderr: (chunk) => console.log(chunk.toString('utf8')),
@@ -33,7 +34,7 @@ async function name() {
     //     onStdout: (chunk) => console.log(chunk.toString('utf8'))
     // })
 
-    await ssh.dispose()
+    // await ssh.dispose()
 }
 
 name()
