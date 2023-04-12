@@ -8,9 +8,9 @@ export declare class ClientSSH {
     connect(options: ConnectSSHOptions): Promise<ClientSSH>;
     isConnected(): Promise<boolean>;
     getConfig(): Promise<Config>;
-    execCommand(command: string, options?: SSHExecCommandOptions): Promise<SSHExecCommandResponse>;
-    execCommandRoot(command: string, options?: SSHExecRootCommandOptions): Promise<SSHExecRootCommandResponse>;
-    exec(command: string, parameters: string[], options?: SSHExecOptions): Promise<SSHExecCommandResponse | string>;
-    execRoot(command: string, options?: SSHExecRootCommandOptions, parameters?: string[]): Promise<void>;
+    execCommand(command: string | string[], options?: SSHExecCommandOptions): Promise<SSHExecCommandResponse>;
+    execCommandRoot(command: string | string[], options?: SSHExecRootCommandOptions): Promise<SSHExecRootCommandResponse>;
+    exec(command: string | string[], parameters: string[], options?: SSHExecOptions): Promise<SSHExecCommandResponse | string>;
+    execRoot(command: string | string[], options?: SSHExecRootCommandOptions, parameters?: string[]): Promise<void>;
     dispose(): Promise<void>;
 }

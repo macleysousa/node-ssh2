@@ -1,6 +1,6 @@
 {
   "name": "nodejs-ssh2",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "description": "Extends node-ssh to add more features",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -13,7 +13,7 @@
     "ssh2-streams": "^0.4.10"
   },
   "devDependencies": {
-    "@types/ssh2": "^1.11.9",
+    "@types/ssh2": "^1.11.11",
     "@types/ssh2-streams": "^0.1.9",
     "dotenv": "^16.0.3",
     "ts-node": "^10.9.1",

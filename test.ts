@@ -12,15 +12,14 @@ async function name() {
         host: SSH_HOST as string ?? 'host',
         username: SSH_USERNAME as string ?? 'username',
         password: SSH_PASSWORD as string ?? 'password',
-        timeout: 5000,
     }
     const ssh = await new ClientSSH().connect(connection)
 
-    ssh.execCommandRoot('dokku logs hermes-api -n 999', {
+    const cmd = await ssh.execCommand(['echo "hello"', ' echo "word"'], {
         onStdout: (chunk) => console.log(chunk.toString('utf8')),
     })
 
-    console.log('------------------', ssh.isConnected());
+    console.log('------------------', cmd);
 
     // await ssh.execRoot('dokku logs coral-api -n 2 -p web ', {
     //     // onStderr: (chunk) => console.log(chunk.toString('utf8')),
@@ -34,7 +33,7 @@ async function name() {
     //     onStdout: (chunk) => console.log(chunk.toString('utf8'))
     // })
 
-    // await ssh.dispose()
+    await ssh.dispose()
 }
 
 name()

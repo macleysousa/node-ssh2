@@ -79,6 +79,8 @@ var ClientSSH = /** @class */ (function () {
     ClientSSH.prototype.execCommand = function (command, options) {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
+                if (Array.isArray(command))
+                    command = command.join(' \n ');
                 return [2 /*return*/, this.connection.execCommand(command, options)];
             });
         });
@@ -92,6 +94,8 @@ var ClientSSH = /** @class */ (function () {
                     case 1:
                         config = _b.sent();
                         password = "".concat(config === null || config === void 0 ? void 0 : config.password);
+                        if (Array.isArray(command))
+                            command = command.join(' \n ');
                         return [4 /*yield*/, this.connection.execCommand(command, {
                                 execOptions: { pty: true },
                                 stdin: "".concat(password, "\n"),
@@ -110,6 +114,8 @@ var ClientSSH = /** @class */ (function () {
     ClientSSH.prototype.exec = function (command, parameters, options) {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
+                if (Array.isArray(command))
+                    command = command.join(' \n ');
                 return [2 /*return*/, this.connection.exec(command, parameters !== null && parameters !== void 0 ? parameters : [], options)];
             });
         });
@@ -123,6 +129,8 @@ var ClientSSH = /** @class */ (function () {
                     case 1:
                         config = _a.sent();
                         password = "".concat(config === null || config === void 0 ? void 0 : config.password);
+                        if (Array.isArray(command))
+                            command = command.join(' \n ');
                         return [4 /*yield*/, this.connection.exec(command, parameters !== null && parameters !== void 0 ? parameters : [], {
                                 execOptions: { pty: true },
                                 stdin: "".concat(password, "\n"),

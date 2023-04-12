@@ -29,13 +29,19 @@ export class ClientSSH {
         return config;
     }
 
-    async execCommand(command: string, options?: SSHExecCommandOptions): Promise<SSHExecCommandResponse> {
+    async execCommand(command: string | string[], options?: SSHExecCommandOptions): Promise<SSHExecCommandResponse> {
+        if (Array.isArray(command))
+            command = command.join(' \n ');
+
         return this.connection.execCommand(command, options)
     }
 
-    async execCommandRoot(command: string, options?: SSHExecRootCommandOptions): Promise<SSHExecRootCommandResponse> {
+    async execCommandRoot(command: string | string[], options?: SSHExecRootCommandOptions): Promise<SSHExecRootCommandResponse> {
         const config = await this.getConfig();
         const password: string = `${config?.password}`;
+        if (Array.isArray(command))
+            command = command.join(' \n ');
+
         const { code, signal, stderr, stdout } = await this.connection.execCommand(command, {
             execOptions: { pty: true },
             stdin: `${password}\n`,
@@ -48,18 +54,25 @@ export class ClientSSH {
     }
 
     async exec(
-        command: string,
+        command: string | string[],
         parameters: string[],
         options?: SSHExecOptions): Promise<SSHExecCommandResponse | string> {
+        if (Array.isArray(command))
+            command = command.join(' \n ');
+
         return this.connection.exec(command, parameters ?? [], options as any);
     }
 
     async execRoot(
-        command: string,
+        command: string | string[],
         options?: SSHExecRootCommandOptions,
         parameters?: string[]): Promise<void> {
         const config = await this.getConfig();
         const password: string = `${config?.password}`
+
+        if (Array.isArray(command))
+            command = command.join(' \n ');
+
         await this.connection.exec(command, parameters ?? [], {
             execOptions: { pty: true },
             stdin: `${password}\n`,
