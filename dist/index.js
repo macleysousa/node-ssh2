@@ -1,4 +1,19 @@
 "use strict";
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -38,9 +53,13 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ClientSSH = void 0;
 var node_ssh_1 = require("node-ssh");
-var ClientSSH = /** @class */ (function () {
+var events_1 = require("events");
+var ClientSSH = /** @class */ (function (_super) {
+    __extends(ClientSSH, _super);
     function ClientSSH() {
-        this.connection = new node_ssh_1.NodeSSH();
+        var _this = _super.call(this) || this;
+        _this.connection = new node_ssh_1.NodeSSH();
+        return _this;
     }
     ClientSSH.prototype.connect = function (options) {
         var _a;
@@ -53,8 +72,9 @@ var ClientSSH = /** @class */ (function () {
                         _b.sent();
                         setTimeout(function () {
                             _this.dispose();
-                            console.info('ClientSSH ===>', 'Connection timeout');
+                            _this.emit('timeout');
                         }, (_a = options.timeout) !== null && _a !== void 0 ? _a : 1000 * 60 * 2);
+                        this.emit('connect');
                         return [2 /*return*/, this];
                 }
             });
@@ -149,10 +169,14 @@ var ClientSSH = /** @class */ (function () {
     ClientSSH.prototype.dispose = function () {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
+                this.emit('dispose');
                 return [2 /*return*/, this.connection.dispose()];
             });
         });
     };
+    ClientSSH.prototype.on = function (eventName, listener) {
+        return _super.prototype.on.call(this, eventName, listener);
+    };
     return ClientSSH;
-}());
+}(events_1.EventEmitter));
 exports.ClientSSH = ClientSSH;

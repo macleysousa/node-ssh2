@@ -1,13 +1,15 @@
 import { Config, NodeSSH, SSHExecCommandOptions, SSHExecCommandResponse, SSHExecOptions } from "node-ssh";
+import { EventEmitter } from 'events';
 
 import { ConnectSSHOptions } from "./types/connect";
 import { SSHExecRootCommandOptions } from "./types/ssh-exec-root-command-options";
 import { SSHExecRootCommandResponse } from "./types/ssh-exec-root-command-response";
 
-export class ClientSSH {
+export class ClientSSH extends EventEmitter {
     private connection: NodeSSH;
 
     constructor() {
+        super();
         this.connection = new NodeSSH();
     }
 
@@ -15,8 +17,10 @@ export class ClientSSH {
         await this.connection.connect(options)
         setTimeout(() => {
             this.dispose()
-            console.info('ClientSSH ===>', 'Connection timeout');
+            this.emit('timeout');
         }, options.timeout ?? 1000 * 60 * 2);
+
+        this.emit('connect');
         return this;
     }
 
@@ -85,6 +89,11 @@ export class ClientSSH {
     }
 
     async dispose(): Promise<void> {
+        this.emit('dispose');
         return this.connection.dispose();
+    }
+
+    on(eventName: 'connect' | 'dispose' | 'timeout' | 'error', listener: (...args: any[]) => void) {
+        return super.on(eventName, listener);
     }
 }
