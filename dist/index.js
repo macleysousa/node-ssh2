@@ -14,6 +14,17 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
+var __assign = (this && this.__assign) || function () {
+    __assign = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign.apply(this, arguments);
+};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -58,22 +69,31 @@ var ClientSSH = /** @class */ (function (_super) {
     __extends(ClientSSH, _super);
     function ClientSSH() {
         var _this = _super.call(this) || this;
+        _this.timeout = 1000 * 60 * 2;
+        _this.client = null;
         _this.connection = new node_ssh_1.NodeSSH();
         return _this;
     }
+    ClientSSH.prototype.onDispatcher = function (timeout) {
+        var _this = this;
+        console.log('timeout', timeout);
+        if (this.dispatcher)
+            clearTimeout(this.dispatcher);
+        this.dispatcher = setTimeout(function () {
+            _this.dispose();
+            _this.emit('timeout');
+        }, timeout);
+    };
     ClientSSH.prototype.connect = function (options) {
-        var _a;
         return __awaiter(this, void 0, void 0, function () {
-            var _this = this;
-            return __generator(this, function (_b) {
-                switch (_b.label) {
+            var _a, _b;
+            return __generator(this, function (_c) {
+                switch (_c.label) {
                     case 0: return [4 /*yield*/, this.connection.connect(options)];
                     case 1:
-                        _b.sent();
-                        setTimeout(function () {
-                            _this.dispose();
-                            _this.emit('timeout');
-                        }, (_a = options.timeout) !== null && _a !== void 0 ? _a : 1000 * 60 * 2);
+                        _c.sent();
+                        this.client = (_a = this.connection) === null || _a === void 0 ? void 0 : _a.connection;
+                        this.onDispatcher((_b = options.timeout) !== null && _b !== void 0 ? _b : this.timeout);
                         this.emit('connect');
                         return [2 /*return*/, this];
                 }
@@ -101,6 +121,8 @@ var ClientSSH = /** @class */ (function (_super) {
             return __generator(this, function (_a) {
                 if (Array.isArray(command))
                     command = command.join(' \n ');
+                if (options === null || options === void 0 ? void 0 : options.timeout)
+                    this.onDispatcher(options.timeout);
                 return [2 /*return*/, this.connection.execCommand(command, options)];
             });
         });
@@ -116,6 +138,8 @@ var ClientSSH = /** @class */ (function (_super) {
                         password = "".concat(config === null || config === void 0 ? void 0 : config.password);
                         if (Array.isArray(command))
                             command = command.join(' \n ');
+                        if (options === null || options === void 0 ? void 0 : options.timeout)
+                            this.onDispatcher(options.timeout);
                         return [4 /*yield*/, this.connection.execCommand(command, {
                                 execOptions: { pty: true },
                                 stdin: "".concat(password, "\n"),
@@ -140,27 +164,23 @@ var ClientSSH = /** @class */ (function (_super) {
             });
         });
     };
-    ClientSSH.prototype.execRoot = function (command, options, parameters) {
+    ClientSSH.prototype.execRoot = function (command, parameters, options) {
         return __awaiter(this, void 0, void 0, function () {
             var config, password;
-            return __generator(this, function (_a) {
-                switch (_a.label) {
+            var _a;
+            return __generator(this, function (_b) {
+                switch (_b.label) {
                     case 0: return [4 /*yield*/, this.getConfig()];
                     case 1:
-                        config = _a.sent();
+                        config = _b.sent();
                         password = "".concat(config === null || config === void 0 ? void 0 : config.password);
                         if (Array.isArray(command))
                             command = command.join(' \n ');
-                        return [4 /*yield*/, this.connection.exec(command, parameters !== null && parameters !== void 0 ? parameters : [], {
-                                execOptions: { pty: true },
-                                stdin: "".concat(password, "\n"),
-                                cwd: options === null || options === void 0 ? void 0 : options.cwd,
-                                encoding: options === null || options === void 0 ? void 0 : options.encoding,
-                                onStdout: function (chunk) { var _a; return (_a = options === null || options === void 0 ? void 0 : options.onStdout) === null || _a === void 0 ? void 0 : _a.call(options, Buffer.from(chunk.toString('utf-8').replace(password, ''))); },
-                                onStderr: function (chunk) { var _a; return (_a = options === null || options === void 0 ? void 0 : options.onStderr) === null || _a === void 0 ? void 0 : _a.call(options, Buffer.from(chunk.toString('utf-8').replace(password, ''))); },
-                            })];
+                        if (options === null || options === void 0 ? void 0 : options.timeout)
+                            this.onDispatcher(options.timeout);
+                        return [4 /*yield*/, this.connection.exec(command, parameters !== null && parameters !== void 0 ? parameters : [], __assign(__assign({}, options), { execOptions: (_a = options === null || options === void 0 ? void 0 : options.execOptions) !== null && _a !== void 0 ? _a : { pty: true }, stdin: "".concat(password, "\n"), onStdout: function (chunk) { var _a; return (_a = options === null || options === void 0 ? void 0 : options.onStdout) === null || _a === void 0 ? void 0 : _a.call(options, Buffer.from(chunk.toString('utf-8').replace(password, ''))); }, onStderr: function (chunk) { var _a; return (_a = options === null || options === void 0 ? void 0 : options.onStderr) === null || _a === void 0 ? void 0 : _a.call(options, Buffer.from(chunk.toString('utf-8').replace(password, ''))); } }))];
                     case 2:
-                        _a.sent();
+                        _b.sent();
                         return [2 /*return*/];
                 }
             });

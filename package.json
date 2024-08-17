@@ -1,6 +1,6 @@
 {
   "name": "nodejs-ssh2",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "Extends node-ssh to add more features",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -9,15 +9,15 @@
     "build": "tsc -p tsconfig.json --declaration"
   },
   "dependencies": {
-    "node-ssh": "^13.1.0",
+    "node-ssh": "^13.2.0",
     "ssh2-streams": "^0.4.10"
   },
   "devDependencies": {
-    "@types/ssh2": "^1.11.11",
-    "@types/ssh2-streams": "^0.1.9",
-    "dotenv": "^16.0.3",
-    "ts-node": "^10.9.1",
-    "typescript": "^5.1.6"
+    "@types/ssh2": "^1.15.1",
+    "@types/ssh2-streams": "^0.1.12",
+    "dotenv": "^16.4.5",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.5.4"
   },
   "directories": {
     "lib": "lib"

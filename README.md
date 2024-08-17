@@ -13,7 +13,9 @@ or
 yarn add nodejs-ssh2
 ```
 
-#### Example
+### Usage Examples
+
+#### Basic Example
 ```js
 import { ClientSSH } from 'nodejs-ssh2';
 
@@ -30,9 +32,30 @@ await ssh.execCommand(`
     `, {
         onStderr: (chunk) => console.log(chunk.toString('utf8')),
         onStdout: (chunk) => console.log(chunk.toString('utf8'))
-    });
+    });  
 
 await ssh.dispose();
+
+```
+
+#### Command with PTY
+```js
+import { ClientSSH } from 'nodejs-ssh2';
+
+const ssh = new ClientSSH();
+
+await ssh.connect({
+  host: 'localhost',
+  username: 'ubuntu',
+  password: '123'
+});
+
+ssh.execCommand('ping 8.8.8.8', {
+        onStdout: (chunk) => console.log(chunk.toString('utf8')),
+        onStderr: (chunk) => console.log(chunk.toString('utf8')),
+        execOptions: { pty: true },
+        timeout: 1000 * 10
+})
 
 ```
 

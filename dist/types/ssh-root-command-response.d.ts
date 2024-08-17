@@ -1,4 +1,4 @@
-export interface SSHExecRootCommandResponse {
+export interface SSHRootCommandResponse {
     stdout: string;
     stderr: string;
     code: number | null;
