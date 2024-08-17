@@ -23,10 +23,8 @@ export class ClientSSH extends EventEmitter {
     }
 
     private onDispatcher(timeout: number) {
-        console.log('timeout', timeout)
         if (this.dispatcher)
             clearTimeout(this.dispatcher);
-
 
         this.dispatcher = setTimeout(() => {
             this.dispose()
