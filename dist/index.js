@@ -76,7 +76,6 @@ var ClientSSH = /** @class */ (function (_super) {
     }
     ClientSSH.prototype.onDispatcher = function (timeout) {
         var _this = this;
-        console.log('timeout', timeout);
         if (this.dispatcher)
             clearTimeout(this.dispatcher);
         this.dispatcher = setTimeout(function () {
